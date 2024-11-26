@@ -2,5 +2,6 @@
 name = "common_collections"
 version = "0.1.0"
 edition = "2021"
+default-run = "common_collections"
 
 [dependencies]
