@@ -1,39 +1,17 @@
-enum SpreadsheetCell {
-    Int(i32),
-    Float(f64),
-    Text(String),
-}
+// Given a list of integers, return a vector containing the median and the mode
+fn challenge_integer_list() {}
+
+// Convert strings to pig latin.
+// The first consonant of each word is moved to the end of the word and ay is added, so first becomes irst-fay.
+// Words that start with a vowel have hay added to the end instead (apple becomes apple-hay)
+fn challenge_pig_lating() {}
+
+// Using a hash map and vectors, create a text interface to allow a user to add employee names to a department in a company
+// for example, “Add Sally to Engineering” or “Add Amir to Sales.” Then let the user retrieve a list of all people in a department or all people in the company by department, sorted alphabetically.
+fn challenge_employee_list() {}
 
 fn main() {
-    let vector: Vec<usize> = Vec::new();
-    dbg!(vector);
-    let mut vector = vec![1, 2, 3];
-    vector.push(4);
-    let first: &usize = &vector[0];
-    println!("First element is {}", first);
-    let first: Option<&usize> = vector.get(0);
-    match first {
-        Some(first) => println!("First element is {}", first),
-        _ => println!("There is no first element"),
-    }
-    let tenth: Option<&usize> = vector.get(10);
-    match tenth {
-        Some(tenth) => println!("Tenth element is {}", tenth),
-        _ => println!("There is no tenth element"),
-    }
-    for i in &vector {
-        println!("{i}");
-    }
-    let spreadsheet_row = vec![
-        SpreadsheetCell::Int(4),
-        SpreadsheetCell::Text(String::from("some sort of text")),
-        SpreadsheetCell::Float(1.0),
-    ];
-    for i in &spreadsheet_row {
-        match i {
-            SpreadsheetCell::Int(num) => println!("int: {}", num),
-            SpreadsheetCell::Text(txt) => println!("txt: {txt}"),
-            SpreadsheetCell::Float(num) => println!("float: {num}"),
-        }
-    }
+    challenge_integer_list();
+    challenge_pig_lating();
+    challenge_employee_list()
 }
