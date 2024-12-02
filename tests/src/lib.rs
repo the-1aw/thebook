@@ -35,15 +35,43 @@ pub fn greeting(name: &str) -> String {
     format!("Hello {name}!")
 }
 
+pub fn fact(n: i128) -> i128 {
+    let mut res = 1i128;
+    for i in 1..=n {
+        res *= i
+    }
+    res
+}
+
 #[cfg(test)]
 mod tests {
 
     use super::*;
 
     #[test]
-    fn it_adds_two() {
+    #[ignore = "Test is heavy to compute, run it only if needed"]
+    fn compute_heavy() {
+        for _ in 0..10_000_000 {
+            fact(20);
+        }
+    }
+
+    #[test]
+    fn add_two_and_two() {
         let result = add_two(2);
         assert_eq!(result, 4);
+    }
+
+    #[test]
+    fn add_two_and_three() {
+        let result = add_two(3);
+        assert_eq!(result, 5);
+    }
+
+    #[test]
+    fn add_two_and_four() {
+        let result = add_two(4);
+        assert_eq!(result, 6);
     }
 
     #[test]
