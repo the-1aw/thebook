@@ -2,10 +2,9 @@
 // we will add a few grep fonctionnality. As a reminder here is grep usage
 // Usage: minigrep [OPTION]... PATTERNS [FILE]...
 // Unlike grep we won't do options here
-// - [ ] we will implement reading from stdin like grep
+// - [x] we will implement reading from stdin like grep
 // - [x] we will also handle multi-file pattern
 // - [x] it would also be nice to have a usage
-// - [ ] (Maybe if the mood is there we'll do --help option at the end)
 
 pub struct Config {
     pattern: String,
@@ -43,8 +42,8 @@ pub fn run(config: Config) -> Result<(), Box<dyn std::error::Error>> {
             config.pattern, config.path_list
         );
         for path in &config.path_list {
-            let contents = std::fs::read_to_string(&path)?;
-            for line in search(&config.pattern, &contents) {
+            let content = std::fs::read_to_string(&path)?;
+            for line in search(&config.pattern, &content) {
                 if config.path_list.len() > 1 {
                     print!("{path}:");
                 }
@@ -52,7 +51,15 @@ pub fn run(config: Config) -> Result<(), Box<dyn std::error::Error>> {
             }
         }
     } else {
-        println!("In the end this will search in stdin");
+        let stdin_handle = std::io::stdin();
+        let mut buff = String::new();
+        loop {
+            let _ = stdin_handle.read_line(&mut buff)?;
+            if buff.contains(&config.pattern) {
+                println!("{buff}");
+            }
+            buff.clear();
+        }
     }
     Ok(())
 }
