@@ -17,15 +17,30 @@ impl Config {
     }
 }
 
+fn search<'a>(pattern: &str, file_content: &'a str) -> Vec<&'a str> {
+    let mut lines_found: Vec<&str> = Vec::new();
+    for line in file_content.lines() {
+        if line.contains(pattern) {
+            lines_found.push(line);
+        }
+    }
+    lines_found
+}
+
 pub fn run(config: Config) -> Result<(), Box<dyn std::error::Error>> {
     if config.path_list.len() > 0 {
         println!(
             "Searching for \"{}\" in files {:?}",
             config.pattern, config.path_list
         );
-        for path in config.path_list {
+        for path in &config.path_list {
             let contents = std::fs::read_to_string(&path)?;
-            println!("File {path} contains test:\n{contents}");
+            for line in search(&config.pattern, &contents) {
+                if config.path_list.len() > 1 {
+                    print!("{path}:");
+                }
+                println!("{line}");
+            }
         }
     } else {
         println!("In the end this will search in stdin");
@@ -35,5 +50,32 @@ pub fn run(config: Config) -> Result<(), Box<dyn std::error::Error>> {
 
 #[cfg(test)]
 mod tests {
-    // use super::*;
+    use super::*;
+
+    #[test]
+    fn search_one_result() {
+        let pattern = "duct";
+        let contents = "\
+Rust:
+safe, fast, productive.
+Pick three.";
+        assert_eq!(vec!["safe, fast, productive."], search(pattern, contents));
+    }
+
+    #[test]
+    fn search_many_result() {
+        let pattern = "duct";
+        let contents = "\
+Rust:
+safe, fast, productive.
+Pick three.
+Productive!
+Fast!
+Safe!
+            ";
+        assert_eq!(
+            vec!["safe, fast, productive.", "Productive!"],
+            search(pattern, contents)
+        );
+    }
 }
