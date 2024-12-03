@@ -14,6 +14,11 @@ fn main() {
 
     if path_list.len() > 0 {
         println!("Searching for \"{pattern}\" in files {path_list:?}");
+        for path in path_list {
+            let contents =
+                std::fs::read_to_string(path).expect(&format!("Unable to read file {path}"));
+            println!("File {path} contains test:\n{contents}");
+        }
     } else {
         println!("In the end this will search in stdin");
     }
