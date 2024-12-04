@@ -9,6 +9,7 @@
 pub struct Config {
     pattern: String,
     path_list: Vec<String>,
+    ignore_case: bool,
 }
 
 impl Config {
@@ -21,8 +22,19 @@ impl Config {
         Ok(Config {
             pattern: pattern.to_string(),
             path_list: path_list.to_vec(),
+            ignore_case: std::env::var("IGNORE_CASE").is_ok(),
         })
     }
+}
+
+fn search_case_insensitive<'a>(pattern: &str, file_content: &'a str) -> Vec<&'a str> {
+    let mut lines_found: Vec<&str> = Vec::new();
+    for line in file_content.lines() {
+        if line.to_lowercase().contains(&pattern.to_lowercase()) {
+            lines_found.push(line);
+        }
+    }
+    lines_found
 }
 
 fn search<'a>(pattern: &str, file_content: &'a str) -> Vec<&'a str> {
@@ -36,6 +48,11 @@ fn search<'a>(pattern: &str, file_content: &'a str) -> Vec<&'a str> {
 }
 
 pub fn run(config: Config) -> Result<(), Box<dyn std::error::Error>> {
+    let search_fn = if config.ignore_case {
+        search_case_insensitive
+    } else {
+        search
+    };
     if config.path_list.len() > 0 {
         println!(
             "Searching for \"{}\" in files {:?}",
@@ -43,7 +60,7 @@ pub fn run(config: Config) -> Result<(), Box<dyn std::error::Error>> {
         );
         for path in &config.path_list {
             let content = std::fs::read_to_string(&path)?;
-            for line in search(&config.pattern, &content) {
+            for line in search_fn(&config.pattern, &content) {
                 if config.path_list.len() > 1 {
                     print!("{path}:");
                 }
@@ -55,8 +72,9 @@ pub fn run(config: Config) -> Result<(), Box<dyn std::error::Error>> {
         let mut buff = String::new();
         loop {
             let _ = stdin_handle.read_line(&mut buff)?;
-            if buff.contains(&config.pattern) {
-                println!("{buff}");
+            let res = search_fn(&config.pattern, &buff);
+            if res.len() > 0 {
+                println!("{}", &res[0])
             }
             buff.clear();
         }
@@ -92,6 +110,29 @@ Safe!
         assert_eq!(
             vec!["safe, fast, productive.", "Productive!"],
             search(pattern, contents)
+        );
+    }
+
+    #[test]
+    fn search_case_not_found() {
+        let pattern = "DuCt";
+        let contents = "\
+Rust:
+safe, fast, productive.
+Pick three.";
+        assert_eq!(0, search(pattern, contents).len());
+    }
+
+    #[test]
+    fn search_case_found() {
+        let pattern = "DuCt";
+        let contents = "\
+Rust:
+safe, fast, prodUcTive.
+Pick three.";
+        assert_eq!(
+            vec!["safe, fast, prodUcTive."],
+            search_case_insensitive(pattern, contents)
         );
     }
 }
