@@ -72,9 +72,8 @@ pub fn run(config: Config) -> Result<(), Box<dyn std::error::Error>> {
         let mut buff = String::new();
         loop {
             let _ = stdin_handle.read_line(&mut buff)?;
-            let res = search_fn(&config.pattern, &buff);
-            if res.len() > 0 {
-                println!("{}", &res[0])
+            for line in search_fn(&config.pattern, &buff) {
+                println!("{line}")
             }
             buff.clear();
         }
