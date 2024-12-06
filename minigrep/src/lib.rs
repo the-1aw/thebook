@@ -6,6 +6,9 @@
 // - [x] we will also handle multi-file pattern
 // - [x] it would also be nice to have a usage
 
+const USAGE_PROMPT: &str = "Usage: minigrep PATTERNS [FILE]...";
+
+#[derive(Debug, PartialEq)]
 pub struct Config {
     pattern: String,
     path_list: Vec<String>,
@@ -16,9 +19,9 @@ impl Config {
     pub fn new(mut args: impl Iterator<Item = String>) -> Result<Config, &'static str> {
         let pattern = match args.nth(1) {
             Some(pattern) => pattern,
-            _ => return Err("Usage: minigrep PATTERNS [FILE]..."),
+            _ => return Err(USAGE_PROMPT),
         };
-        let path_list: Vec<String> = args.skip(2).collect();
+        let path_list: Vec<String> = args.collect();
         Ok(Config {
             pattern,
             path_list,
@@ -77,7 +80,34 @@ pub fn run(config: Config) -> Result<(), Box<dyn std::error::Error>> {
 
 #[cfg(test)]
 mod tests {
+
     use super::*;
+
+    #[test]
+    fn config_new() {
+        let args: Vec<String> = Vec::new();
+        assert_eq!(Config::new(args.into_iter()), Err(USAGE_PROMPT));
+        let binary_name = String::from("minigrep");
+        let pattern = String::from("pattern");
+        let pathname1 = String::from("somefile.txt");
+        let pathname2 = String::from("otherfile.txt");
+
+        let args: Vec<String> = vec![binary_name.clone(), pattern.clone()];
+        let conf = Config::new(args.into_iter()).unwrap();
+        assert_eq!(conf.pattern, pattern);
+        assert_eq!(conf.path_list.len(), 0);
+
+        let args: Vec<String> = vec![
+            binary_name.clone(),
+            pattern.clone(),
+            pathname1.clone(),
+            pathname2.clone(),
+        ];
+        let expected_path_list = Vec::from(&args[2..]);
+        let conf = Config::new(args.into_iter()).unwrap();
+        assert_eq!(conf.pattern, pattern);
+        assert_eq!(conf.path_list, expected_path_list);
+    }
 
     #[test]
     fn search_one_result() {
