@@ -1,0 +1,25 @@
+[workspace]
+members = [
+"backyard",
+"brstd",
+"common_collections",
+"control_flow",
+"enums",
+"errors",
+"functions",
+"generics",
+"guessing_game",
+"hello_cargo",
+"hello_world",
+"iterators",
+"lifetime",
+"minigrep",
+"ownership",
+"rectangle",
+"restaurant",
+"struct_type",
+"tests",
+"traits",
+"variables",
+]
+resolver = "2"
