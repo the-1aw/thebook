@@ -1,0 +1,9 @@
+[package]
+name = "brstd"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+description = "Bryan’s Rust Standard Library is a collection of utilities to make common taks more convenient."
+
+
+[dependencies]
