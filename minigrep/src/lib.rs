@@ -13,38 +13,32 @@ pub struct Config {
 }
 
 impl Config {
-    pub fn new(args: &[String]) -> Result<Config, &'static str> {
-        let pattern = match args.get(1) {
+    pub fn new(mut args: impl Iterator<Item = String>) -> Result<Config, &'static str> {
+        let pattern = match args.nth(1) {
             Some(pattern) => pattern,
             _ => return Err("Usage: minigrep PATTERNS [FILE]..."),
         };
-        let path_list = &args[2..];
+        let path_list: Vec<String> = args.skip(2).collect();
         Ok(Config {
-            pattern: pattern.to_string(),
-            path_list: path_list.to_vec(),
+            pattern,
+            path_list,
             ignore_case: std::env::var("IGNORE_CASE").is_ok(),
         })
     }
 }
 
 fn search_case_insensitive<'a>(pattern: &str, file_content: &'a str) -> Vec<&'a str> {
-    let mut lines_found: Vec<&str> = Vec::new();
-    for line in file_content.lines() {
-        if line.to_lowercase().contains(&pattern.to_lowercase()) {
-            lines_found.push(line);
-        }
-    }
-    lines_found
+    file_content
+        .lines()
+        .filter(|line| line.to_lowercase().contains(&pattern.to_lowercase()))
+        .collect()
 }
 
 fn search<'a>(pattern: &str, file_content: &'a str) -> Vec<&'a str> {
-    let mut lines_found: Vec<&str> = Vec::new();
-    for line in file_content.lines() {
-        if line.contains(pattern) {
-            lines_found.push(line);
-        }
-    }
-    lines_found
+    file_content
+        .lines()
+        .filter(|line| line.contains(pattern))
+        .collect()
 }
 
 pub fn run(config: Config) -> Result<(), Box<dyn std::error::Error>> {

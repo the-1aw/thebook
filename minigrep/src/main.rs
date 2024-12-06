@@ -2,8 +2,7 @@ use minigrep::Config;
 use std::{env, process};
 
 fn main() {
-    let args: Vec<String> = env::args().collect();
-    let config = match Config::new(&args) {
+    let config = match Config::new(env::args()) {
         Ok(config) => config,
         Err(err) => {
             eprintln!("{}", err);
