@@ -16,7 +16,7 @@ members = [
 "minigrep",
 "ownership",
 "rectangle",
-"restaurant",
+"restaurant", "smart_pointers",
 "struct_type",
 "tests",
 "traits",
