@@ -3,17 +3,20 @@ pub enum ConsList {
     Cons(u32, Box<ConsList>),
     Nil,
 }
-pub struct MyBox<T>(T);
+pub struct MyBox<T: Debug>(T);
 
-impl<T> MyBox<T> {
+impl<T: Debug> MyBox<T> {
     pub fn new(x: T) -> MyBox<T> {
         MyBox(x)
     }
 }
 
-use std::ops::{Deref, DerefMut};
+use std::{
+    fmt::Debug,
+    ops::{Deref, DerefMut},
+};
 
-impl<T> Deref for MyBox<T> {
+impl<T: Debug> Deref for MyBox<T> {
     type Target = T;
 
     fn deref(&self) -> &Self::Target {
@@ -21,9 +24,15 @@ impl<T> Deref for MyBox<T> {
     }
 }
 
-impl<T> DerefMut for MyBox<T> {
+impl<T: Debug> DerefMut for MyBox<T> {
     fn deref_mut(&mut self) -> &mut Self::Target {
         &mut self.0
+    }
+}
+
+impl<T: Debug> Drop for MyBox<T> {
+    fn drop(&mut self) {
+        println!("Droping my box: {:?}", self.0)
     }
 }
 
@@ -62,10 +71,11 @@ mod tests {
             println!("{str}")
         }
 
-        let my_str_box = MyBox::new(String::from("Rust"));
+        let my_str_box = MyBox::new(String::from("my_str_box"));
         hello(&my_str_box);
-        let mut my_mut_str_box = MyBox::new(String::from("Rust"));
+        let mut my_mut_str_box = MyBox::new(String::from("my_str_mut_box"));
         hello(&my_mut_str_box);
         hello_mut(&mut my_mut_str_box);
+        drop(my_str_box);
     }
 }
