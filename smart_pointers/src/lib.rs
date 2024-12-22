@@ -1,8 +1,24 @@
+use std::{
+    fmt::Debug,
+    ops::{Deref, DerefMut},
+    rc::Rc,
+};
+
 #[derive(Debug, PartialEq)]
 pub enum ConsList {
-    Cons(u32, Box<ConsList>),
+    Cons(u32, Rc<ConsList>),
     Nil,
 }
+
+impl Clone for ConsList {
+    fn clone(&self) -> Self {
+        match self {
+            Self::Nil => Self::Nil,
+            Self::Cons(value, next) => Self::Cons(*value, Rc::clone(next)),
+        }
+    }
+}
+
 pub struct MyBox<T: Debug>(T);
 
 impl<T: Debug> MyBox<T> {
@@ -10,11 +26,6 @@ impl<T: Debug> MyBox<T> {
         MyBox(x)
     }
 }
-
-use std::{
-    fmt::Debug,
-    ops::{Deref, DerefMut},
-};
 
 impl<T: Debug> Deref for MyBox<T> {
     type Target = T;
@@ -44,12 +55,12 @@ mod tests {
     fn cons_list() {
         use ConsList::{Cons, Nil};
         // Use while let to go through entire list
-        let list = Cons(1, Box::new(Cons(2, Box::new(Cons(3, Box::new(Nil))))));
-        let mut curr = &list;
+        let list = Rc::new(Cons(1, Rc::new(Cons(2, Rc::new(Cons(3, Rc::new(Nil)))))));
+        let mut curr = Rc::clone(&list);
         let mut val = 1;
-        while let Cons(item, next) = curr {
+        while let Cons(item, next) = (*curr).clone() {
             println!("{item:?}, {next:?}");
-            assert_eq!(val, *item);
+            assert_eq!(val, item);
             val += 1;
             curr = next;
         }
