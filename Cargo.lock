@@ -183,6 +183,10 @@ name = "tests"
 version = "0.1.0"
 
 [[package]]
+name = "threads"
+version = "0.1.0"
+
+[[package]]
 name = "traits"
 version = "0.1.0"
 

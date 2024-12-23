@@ -19,6 +19,7 @@ members = [
 "restaurant", "smart_pointers",
 "struct_type",
 "tests",
+"threads",
 "traits",
 "variables",
 ]
