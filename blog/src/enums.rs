@@ -1,6 +1,7 @@
 pub struct Post {
     state: State,
     content: String,
+    nb_approval: usize,
 }
 
 impl Post {
@@ -8,6 +9,7 @@ impl Post {
         Post {
             state: State::Draft,
             content: String::new(),
+            nb_approval: 0,
         }
     }
 
@@ -30,6 +32,10 @@ impl Post {
     }
 
     pub fn approve(&mut self) {
+        self.nb_approval += 1;
+        if self.nb_approval < 2 {
+            return;
+        }
         match self.state {
             State::PendingReview => self.state = State::Published,
             _ => (),
@@ -64,6 +70,7 @@ mod tests {
         post.request_review();
         assert_eq!("", post.content());
 
+        post.approve();
         post.approve();
         assert_eq!("I hurt myself today", post.content());
     }

@@ -1,6 +1,7 @@
 pub struct Post {
     state: Option<Box<dyn State>>,
     content: String,
+    nb_approval: usize,
 }
 
 impl Post {
@@ -8,6 +9,7 @@ impl Post {
         Post {
             state: Some(Box::new(Draft {})),
             content: String::new(),
+            nb_approval: 0,
         }
     }
 
@@ -26,6 +28,10 @@ impl Post {
     }
 
     pub fn approve(&mut self) {
+        self.nb_approval += 1;
+        if self.nb_approval < 2 {
+            return;
+        }
         if let Some(state) = self.state.take() {
             self.state = Some(state.approve());
         }
@@ -111,6 +117,7 @@ mod tests {
         post.request_review();
         assert_eq!("", post.content());
 
+        post.approve();
         post.approve();
         assert_eq!("I hurt myself today", post.content());
     }
