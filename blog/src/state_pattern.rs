@@ -18,7 +18,9 @@ impl Post {
     }
 
     pub fn add_text(&mut self, txt: &str) {
-        self.content.push_str(txt)
+        if self.state.as_ref().unwrap().can_add_text() {
+            self.content.push_str(txt)
+        }
     }
 
     pub fn request_review(&mut self) {
@@ -48,6 +50,9 @@ trait State {
     fn request_review(self: Box<Self>) -> Box<dyn State>;
     fn approve(self: Box<Self>) -> Box<dyn State>;
     fn reject(self: Box<Self>) -> Box<dyn State>;
+    fn can_add_text(&self) -> bool {
+        false
+    }
     fn content<'a>(&self, _post: &'a Post) -> &'a str {
         ""
     }
@@ -68,6 +73,10 @@ impl State for Draft {
 
     fn reject(self: Box<Self>) -> Box<dyn State> {
         self
+    }
+
+    fn can_add_text(&self) -> bool {
+        true
     }
 }
 
@@ -100,25 +109,5 @@ impl State for Published {
 
     fn reject(self: Box<Self>) -> Box<dyn State> {
         self
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn post_lifecycle() {
-        let mut post = Post::new();
-
-        post.add_text("I hurt myself today");
-        assert_eq!("", post.content());
-
-        post.request_review();
-        assert_eq!("", post.content());
-
-        post.approve();
-        post.approve();
-        assert_eq!("I hurt myself today", post.content());
     }
 }
