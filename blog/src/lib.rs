@@ -1,4 +1,5 @@
 pub mod enums;
+pub mod rs_state_pattern;
 pub mod state_pattern;
 
 #[cfg(test)]

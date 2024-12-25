@@ -1,14 +1,13 @@
-use blog::state_pattern;
+use blog::rs_state_pattern;
 
 fn main() {
-    let mut post = state_pattern::Post::new();
+    let mut post = rs_state_pattern::Post::new();
 
     post.add_text("I hurt myself today");
-    assert_eq!("", post.content());
 
-    post.request_review();
-    assert_eq!("", post.content());
+    let post = post.request_review();
 
-    post.approve();
+    let post = post.approve();
+
     assert_eq!("I hurt myself today", post.content());
 }
