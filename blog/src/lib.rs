@@ -18,6 +18,14 @@ mod tests {
         sp_post.request_review();
         assert_eq!(e_post.content(), sp_post.content());
 
+        e_post.reject();
+        sp_post.reject();
+        assert_eq!(e_post.content(), sp_post.content());
+
+        e_post.request_review();
+        sp_post.request_review();
+        assert_eq!(e_post.content(), sp_post.content());
+
         e_post.approve();
         sp_post.approve();
         assert_eq!(e_post.content(), sp_post.content());
