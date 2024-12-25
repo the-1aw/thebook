@@ -1,6 +1,6 @@
 [workspace]
 members = [
-"backyard",
+"backyard", "blog",
 "brstd",
 "common_collections",
 "control_flow",
