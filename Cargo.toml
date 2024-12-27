@@ -15,7 +15,7 @@ members = [
 "iterators",
 "lifetime",
 "minigrep",
-"ownership",
+"ownership", "pattern",
 "rectangle",
 "restaurant",
 "smart_pointers",
