@@ -67,9 +67,9 @@ pub enum Axis {
 pub fn destructuring_struct(Point { x, y }: Point) -> Axis {
     let p = Point { x, y };
     match p {
-        Point { x: _, y: 0 } => Axis::X,
-        Point { x: 0, y: _ } => Axis::Y,
-        Point { x: _, y: _ } => Axis::None,
+        Point { y: 0, .. } => Axis::X,
+        Point { x: 0, .. } => Axis::Y,
+        Point { .. } => Axis::None,
     }
 }
 
@@ -88,16 +88,30 @@ pub enum Message {
 pub fn destructuring_enums(msg: Message) -> u8 {
     match msg {
         Message::Quit => 1,
-        Message::Move { x: _, y: 0 } => 2,
-        Message::Move { x: 0, y: _ } => 3,
-        Message::Move { x: _, y: _ } => 4,
-        Message::MovePoint(Point { x: _, y: 0 }) => 5,
-        Message::MovePoint(Point { x: 0, y: _ }) => 6,
-        Message::MovePoint(Point { x: _, y: _ }) => 7,
-        Message::ChangeColor(Color::Rgb(_r, 125, _b)) => 8,
-        Message::ChangeColor(Color::Rgb(_r, _g, _b)) => 9,
-        Message::ChangeColor(Color::Hsv(0, _s, _v)) => 10,
-        Message::ChangeColor(Color::Hsv(_h, _s, _v)) => 11,
+        Message::Move { y: 0, .. } => 2,
+        Message::Move { x: 0, .. } => 3,
+        Message::Move { .. } => 4,
+        Message::MovePoint(Point { y: 0, .. }) => 5,
+        Message::MovePoint(Point { x: 0, .. }) => 6,
+        Message::MovePoint(Point { .. }) => 7,
+        Message::ChangeColor(Color::Rgb(_, 125, _)) => 8,
+        Message::ChangeColor(Color::Rgb(..)) => 9,
+        Message::ChangeColor(Color::Hsv(0, ..)) => 10,
+        Message::ChangeColor(Color::Hsv(..)) => 11,
+    }
+}
+
+#[derive(PartialEq, Debug)]
+pub enum NumType {
+    Even(usize),
+    Odd(usize),
+}
+
+pub fn match_guard(num: Option<usize>) -> Option<NumType> {
+    match num {
+        Some(x) if x % 2 == 0 => Some(NumType::Even(x)),
+        Some(x) => Some(NumType::Odd(x)),
+        _ => None,
     }
 }
 
@@ -180,5 +194,12 @@ mod tests {
             destructuring_enums(Message::ChangeColor(Color::Hsv(125, 0, 0))),
             11
         );
+    }
+
+    #[test]
+    fn test_match_guard() {
+        assert_eq!(match_guard(Some(14)), Some(NumType::Even(14)));
+        assert_eq!(match_guard(Some(11)), Some(NumType::Odd(11)));
+        assert_eq!(match_guard(None), None);
     }
 }
