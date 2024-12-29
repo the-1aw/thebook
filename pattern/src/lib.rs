@@ -94,7 +94,7 @@ pub fn destructuring_enums(msg: Message) -> u8 {
         Message::MovePoint(Point { y: 0, .. }) => 5,
         Message::MovePoint(Point { x: 0, .. }) => 6,
         Message::MovePoint(Point { .. }) => 7,
-        Message::ChangeColor(Color::Rgb(_, 125, _)) => 8,
+        Message::ChangeColor(Color::Rgb(_, g @ 100..=200, _)) => g,
         Message::ChangeColor(Color::Rgb(..)) => 9,
         Message::ChangeColor(Color::Hsv(0, ..)) => 10,
         Message::ChangeColor(Color::Hsv(..)) => 11,
@@ -177,9 +177,10 @@ mod tests {
             destructuring_enums(Message::MovePoint(Point { x: 1, y: 1 })),
             7
         );
+        let g = 125;
         assert_eq!(
-            destructuring_enums(Message::ChangeColor(Color::Rgb(0, 125, 0))),
-            8
+            destructuring_enums(Message::ChangeColor(Color::Rgb(0, g, 0))),
+            g
         );
         assert_eq!(
             destructuring_enums(Message::ChangeColor(Color::Rgb(0, 0, 0))),
