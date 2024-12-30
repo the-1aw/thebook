@@ -99,6 +99,10 @@ name = "minigrep"
 version = "0.1.0"
 
 [[package]]
+name = "not_safe"
+version = "0.1.0"
+
+[[package]]
 name = "ownership"
 version = "0.1.0"
 

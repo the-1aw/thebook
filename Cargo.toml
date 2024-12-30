@@ -14,7 +14,7 @@ members = [
 "hello_world",
 "iterators",
 "lifetime",
-"minigrep",
+"minigrep", "not_safe",
 "ownership", "pattern",
 "rectangle",
 "restaurant",
