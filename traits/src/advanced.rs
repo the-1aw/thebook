@@ -1,9 +1,12 @@
 use std::ops::Add;
 
-pub trait Demonize {
+pub trait Demonize: std::fmt::Display {
     type EvilType;
 
     fn make_evil(&self) -> Self::EvilType;
+    fn scream(&self) {
+        println!("{} screams: MAKE ME EVIL!", self);
+    }
 }
 
 #[derive(Debug, PartialEq)]
@@ -17,6 +20,12 @@ pub struct EvilPoint {
     x: u32,
     y: u32,
     z: u32,
+}
+
+impl std::fmt::Display for Point {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "Point({}, {})", self.x, self.y)
+    }
 }
 
 impl Demonize for Point {
