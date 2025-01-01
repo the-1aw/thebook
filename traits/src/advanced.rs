@@ -86,6 +86,23 @@ impl Point {
     }
 }
 
+pub struct PrintableVec(Vec<String>);
+
+impl std::fmt::Display for PrintableVec {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "[{}]", self.0.join(", "))
+    }
+}
+
+// We implement deref on PrintableVec so every method availble on Vec<String> is available on
+// PrintableVec
+impl std::ops::Deref for PrintableVec {
+    type Target = Vec<String>;
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
@@ -123,5 +140,13 @@ mod test {
     fn call_ambiguous_statics() {
         assert_eq!(Point::ambiguous_static(), 20);
         assert_eq!(<Point as Ambiguous>::ambiguous_static(), 9);
+    }
+
+    #[test]
+    fn newtype_pattern() {
+        let printable_vec = PrintableVec(vec!["a".to_string(), "b".to_string()]);
+        let content = format!("{}", printable_vec);
+        assert_eq!(content, "[a, b]");
+        assert_eq!(printable_vec.len(), 2);
     }
 }
