@@ -13,7 +13,7 @@ members = [
 "hello_cargo",
 "hello_world",
 "iterators",
-"lifetime",
+"lifetime", "macros", "macros/macros_derive", 
 "minigrep", "not_safe",
 "ownership", "pattern",
 "rectangle",
