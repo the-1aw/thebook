@@ -22,7 +22,7 @@ members = [
 "struct_type",
 "tests",
 "threads",
-"traits",
+"traits", "types",
 "variables",
 ]
 resolver = "2"
