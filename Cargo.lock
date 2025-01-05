@@ -191,6 +191,10 @@ name = "restaurant"
 version = "0.1.0"
 
 [[package]]
+name = "server"
+version = "0.1.0"
+
+[[package]]
 name = "smart_pointers"
 version = "0.1.0"
 
