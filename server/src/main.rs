@@ -1,19 +1,22 @@
+use server::ThreadPool;
 use std::{
     fs,
     io::{BufRead, BufReader, Write},
     net::{TcpListener, TcpStream},
+    thread,
+    time::Duration,
 };
 
 fn handle_client(mut stream: TcpStream) {
     let reader = BufReader::new(&mut stream);
-    let request: Vec<_> = reader
-        .lines()
-        .map(|line| line.unwrap())
-        .take_while(|line| !line.is_empty())
-        .collect();
+    let request_line = reader.lines().next().unwrap().unwrap();
 
-    let (filename, status) = match request.get(0) {
-        Some(request_line) if request_line == "GET / HTTP/1.1" => ("index.html", "200 OK"),
+    let (filename, status) = match &request_line[..] {
+        "GET / HTTP/1.1" => ("index.html", "200 OK"),
+        "GET /sleep HTTP/1.1" => {
+            thread::sleep(Duration::from_secs(5));
+            ("index.html", "200 OK")
+        }
         _ => ("404.html", "404 NOT_FOUND"),
     };
     let status_line = format!("HTTP/1.1 {status}");
@@ -22,14 +25,15 @@ fn handle_client(mut stream: TcpStream) {
 
     let response = format!("{status_line}\r\nContent-Lenght: {length}\r\n\r\n{content}");
     stream.write_all(response.as_bytes()).unwrap();
-    println!("Request: {request:#?}");
 }
 
 fn main() -> std::io::Result<()> {
     let listener = TcpListener::bind("0.0.0.0:7878")?;
+    let pool = ThreadPool::new(4);
 
     for stream in listener.incoming() {
-        handle_client(stream?);
+        let stream = stream.unwrap();
+        pool.execute(move || handle_client(stream));
     }
     Ok(())
 }
